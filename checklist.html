@@ -1,0 +1,261 @@
+<!DOCTYPE html>
+<html lang="ar">
+<head>
+    <meta charset="UTF-8">
+    <title>قائمة المهام - سهام الوليدي</title>
+    <!-- إضافة Bootstrap CSS -->
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <!-- إضافة Font Awesome للأيقونات -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.1/css/all.min.css">
+    <!-- تنسيق مخصص -->
+    <style>
+        body {
+            font-family: 'Cairo', sans-serif;
+            direction: rtl;
+            background-color: #f8f9fa;
+            padding-top: 70px; /* لتجنب تداخل المحتوى مع شريط التنقل الثابت */
+        }
+        header {
+            background-color: #fff;
+            padding: 20px 0;
+            text-align: center;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        header img {
+            max-width: 250px;
+            width: 100%;
+            height: auto;
+        }
+        nav {
+            background-color: #343a40;
+        }
+        nav .nav-link {
+            color: #fff !important;
+            font-weight: bold;
+        }
+        .container {
+            margin-top: 20px;
+        }
+        .todo-list, .done-list {
+            list-style: none;
+            padding: 0;
+        }
+        .todo-item, .done-item {
+            background: #fff;
+            padding: 15px;
+            margin-bottom: 10px;
+            border-radius: 5px;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            flex-wrap: wrap;
+        }
+        .done-item {
+            text-decoration: line-through;
+            opacity: 0.6;
+        }
+        .task-text {
+            flex: 1;
+            margin: 0 10px;
+            word-break: break-word;
+        }
+        .task-text.done {
+            text-decoration: line-through;
+            color: #6c757d;
+        }
+        .btn-group {
+            flex-shrink: 0;
+        }
+        .btn-edit, .btn-delete {
+            margin-left: 5px;
+        }
+        footer {
+            background-color: #343a40;
+            color: #fff;
+            text-align: center;
+            padding: 20px 0;
+            margin-top: 40px;
+        }
+        /* Responsive Enhancements */
+        @media (max-width: 576px) {
+            .task-text {
+                margin: 10px 0;
+                width: 100%;
+            }
+            .btn-group {
+                width: 100%;
+                text-align: right;
+            }
+            .btn-edit, .btn-delete {
+                margin-left: 0;
+                margin-right: 5px;
+            }
+        }
+    </style>
+    <!-- خط عربي جميل -->
+    <link href="https://fonts.googleapis.com/css?family=Cairo&display=swap" rel="stylesheet">
+</head>
+<body>
+
+    <header>
+        <!-- شعار الشركة -->
+        <img src="https://www.ficosa.com/wp-content/themes/generatepress_child/media/logo_ficosa.png" alt="شعار الشركة">
+    </header>
+
+    <!-- شريط التنقل الثابت في الأعلى -->
+    <nav class="navbar navbar-expand-lg navbar-dark fixed-top">
+        <div class="container">
+            <a class="navbar-brand" href="#">قائمة المهام</a>
+            <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <!-- محاذاة الروابط إلى اليسار في RTL -->
+            <div class="collapse navbar-collapse justify-content-start" id="navbarNav">
+                <ul class="navbar-nav">
+                    <li class="nav-item">
+                        <a class="nav-link" href="index.html">الرئيسية</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="medium.html">التقرير المختصر</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="detailed.html">التقرير المفصل (خطة العمل)</a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <!-- المحتوى الرئيسي -->
+    <div class="container">
+        <div class="row">
+            <div class="col-md-12">
+                <h2>قائمة المهام</h2>
+                <div class="input-group mb-3">
+                    <input type="text" id="new-task-input" class="form-control" placeholder="أضف مهمة جديدة">
+                    <div class="input-group-append">
+                        <button class="btn btn-primary" id="add-task-btn" type="button"><i class="fas fa-plus"></i> إضافة</button>
+                    </div>
+                </div>
+
+                <h4>المهام</h4>
+                <ul class="todo-list" id="todo-list">
+                    <!-- المهام ستضاف هنا -->
+                </ul>
+
+                <h4>المهام المنجزة</h4>
+                <ul class="done-list" id="done-list">
+                    <!-- المهام المنجزة ستضاف هنا -->
+                </ul>
+            </div>
+        </div>
+    </div>
+
+    <!-- تذييل الصفحة -->
+    <footer>
+        <p>&copy; 2024 سهام الوليدي</p>
+    </footer>
+
+    <!-- إضافة jQuery و Bootstrap JS -->
+    <script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.5.2/dist/js/bootstrap.bundle.min.js"></script>
+
+    <!-- JavaScript للوظائف -->
+    <script>
+        $(document).ready(function(){
+            // تعريف المهام الأساسية من التقرير
+            const initialTasks = [
+                "زيادة الإنتاجية بنسبة معينة بعد التشاور مع المدراء",
+                "تحسين الجودة وتقليل العيوب لأقل مستوى ممكن",
+                "خلق بيئة عمل إيجابية كتزيد التفاعل والرضا بين أعضاء الفريق",
+                "اجتماعات دورية لتوضيح الأهداف والمسؤوليات",
+                "تقييم المهارات وتوزيع المهام حسب المهارات",
+                "متابعة يومية للعمل والاجتماعات الفردية",
+                "تحليل جذور المشاكل وتطبيق إجراءات وقائية",
+                "وضع خطط طوارئ للتعامل مع المشاكل الصغيرة والكبيرة",
+                "معالجة التأخر والمشاكل الشخصية لنظام الشؤون الاجتماعية للموظف",
+                "حل المشاكل بين الأعضاء وتعزيز ثقافة الاحترام والتعاون",
+                "تشجيع العمل الجماعي والتفكير المشترك",
+                "تنمية حس المسؤولية المشتركة بين الأعضاء",
+                "بناء الثقة وتطوير المهارات القيادية",
+                "إشاعة الطاقة الإيجابية والتحفيز داخل الفريق",
+                "مراقبة التقدم وتحليل الأداء بانتظام",
+                "مراجعة دورية لاستراتيجيات العمل وتعديلها عند الحاجة",
+                "التعلم المستمر والتحسين من خلال التجارب"
+            ];
+
+            // إضافة المهام الأساسية إلى قائمة المهام
+            initialTasks.forEach(function(task){
+                addTask(task, false);
+            });
+
+            // إضافة مهمة جديدة
+            $('#add-task-btn').click(function(){
+                const taskText = $('#new-task-input').val().trim();
+                if(taskText !== ""){
+                    addTask(taskText, false);
+                    $('#new-task-input').val('');
+                }
+            });
+
+            // السماح بإضافة مهمة عند الضغط على Enter
+            $('#new-task-input').keypress(function(e){
+                if(e.which == 13){
+                    $('#add-task-btn').click();
+                }
+            });
+
+            // Function to add task
+            function addTask(taskText, isDone){
+                const list = isDone ? $('#done-list') : $('#todo-list');
+                const listItem = $('<li>').addClass(isDone ? 'done-item' : 'todo-item');
+
+                const checkbox = $('<input>').attr('type', 'checkbox').addClass('task-checkbox').prop('checked', isDone);
+                const taskSpan = $('<span>').addClass('task-text').text(taskText);
+                if(isDone){
+                    taskSpan.addClass('done');
+                }
+
+                const btnGroup = $('<div>').addClass('btn-group');
+                const editBtn = $('<button>').addClass('btn btn-sm btn-secondary btn-edit').html('<i class="fas fa-edit"></i>');
+                const deleteBtn = $('<button>').addClass('btn btn-sm btn-danger btn-delete').html('<i class="fas fa-trash"></i>');
+
+                btnGroup.append(editBtn, deleteBtn);
+                listItem.append(checkbox, taskSpan, btnGroup);
+                list.append(listItem);
+            }
+
+            // التعامل مع تغيير حالة المهمة
+            $(document).on('change', '.task-checkbox', function(){
+                const listItem = $(this).closest('li');
+                const taskText = listItem.find('.task-text').text();
+                if($(this).is(':checked')){
+                    listItem.remove();
+                    addTask(taskText, true);
+                } else {
+                    listItem.remove();
+                    addTask(taskText, false);
+                }
+            });
+
+            // التعامل مع حذف المهمة
+            $(document).on('click', '.btn-delete', function(){
+                $(this).closest('li').remove();
+            });
+
+            // التعامل مع تعديل المهمة
+            $(document).on('click', '.btn-edit', function(){
+                const listItem = $(this).closest('li');
+                const taskSpan = listItem.find('.task-text');
+                const currentText = taskSpan.text();
+                const newTaskText = prompt("تعديل المهمة:", currentText);
+                if(newTaskText !== null && newTaskText.trim() !== ""){
+                    taskSpan.text(newTaskText.trim());
+                }
+            });
+        });
+    </script>
+
+</body>
+</html>
